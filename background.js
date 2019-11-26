@@ -17,7 +17,7 @@ gettingDefaultZoom.then((storage) => {
 });
 
 function setZoom(tabId, changeInfo, tab) {
-  if (changeInfo.status) {
+  if (("status" in changeInfo || "attention" in changeInfo) && !tab.isInReaderMode) {
     let gettingZoom = browser.tabs.getZoom(tabId);
     gettingZoom.then((currentZoom) => {
       if (defaultZoom != 1 && currentZoom == 1) {
@@ -29,10 +29,6 @@ function setZoom(tabId, changeInfo, tab) {
 
 browser.storage.onChanged.addListener((newSettings) => {
   defaultZoom = parseFloat(newSettings.defaultZoom.newValue) / 100;
-});
-
-browser.tabs.onCreated.addListener((tab) => {
-  browser.tabs.setZoom(tab.id, defaultZoom);
 });
 
 browser.tabs.onUpdated.addListener(setZoom);
